@@ -11,7 +11,7 @@ const IdeaList = () => {
   } = useIdeas();
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-[500px] md:h-auto">
+    <div className="flex-1 overflow-y-auto bg-card rounded-lg shadow-md border border-border p-4 h-[500px] md:h-auto backdrop-blur-sm bg-opacity-90">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-neutral">My Murmurs</h2>
         <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">
@@ -21,14 +21,14 @@ const IdeaList = () => {
 
       <div className="space-y-4">
         {filteredIdeas.length === 0 && (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-12 h-12 mx-auto text-gray-300 mb-2"
+              className="w-12 h-12 mx-auto text-muted mb-3"
             >
               <path
                 strokeLinecap="round"
@@ -36,7 +36,7 @@ const IdeaList = () => {
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
               />
             </svg>
-            <p>{isSearching ? 'No murmurs match your search' : 'No murmurs yet. Create your first one!'}</p>
+            <p className="font-medium">{isSearching ? 'No murmurs match your search' : 'No murmurs yet. Create your first one!'}</p>
           </div>
         )}
 
@@ -44,8 +44,8 @@ const IdeaList = () => {
           <div
             key={idea.id}
             className={`idea-item ${
-              index < filteredIdeas.length - 1 ? 'border-b border-gray-100' : ''
-            } pb-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors`}
+              index < filteredIdeas.length - 1 ? 'border-b border-border' : ''
+            } pb-3 cursor-pointer hover:bg-muted p-2 rounded transition-colors`}
             onClick={() => selectIdea(idea.id)}
           >
             <div className="flex justify-between items-start">
@@ -71,7 +71,7 @@ const IdeaList = () => {
                 )}
               </div>
               <button
-                className="text-gray-400 hover:text-red-500 transition-colors"
+                className="text-muted-foreground hover:text-destructive transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   confirmDelete(idea.id);
@@ -80,10 +80,10 @@ const IdeaList = () => {
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-gray-600 text-sm line-clamp-2 mt-1">
+            <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
               {idea.content}
             </p>
-            <div className="text-xs text-gray-400 mt-2 flex items-center">
+            <div className="text-xs text-muted-foreground mt-2 flex items-center">
               <Clock className="w-4 h-4 mr-1" />
               <span>{formatDate(idea.timestamp)}</span>
             </div>
