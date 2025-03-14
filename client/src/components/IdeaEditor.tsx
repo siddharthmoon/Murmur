@@ -1,17 +1,32 @@
-import { Plus, PenSquare } from "lucide-react";
+import { Plus, Mic, MicOff, PenSquare, Play, Square, StopCircle } from "lucide-react";
 import { useIdeas } from "@/hooks/useIdeas";
 import { Button } from "@/components/ui/button";
+import { useState, useRef, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 const IdeaEditor = () => {
   const { 
     currentIdea, 
     setCurrentIdeaTitle, 
     setCurrentIdeaContent, 
+    setCurrentIdeaAudio,
     saveIdea, 
     selectedIdeaId,
     isEditorVisible,
     toggleEditor
   } = useIdeas();
+  
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<number | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const { toast } = useToast();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentIdeaTitle(e.target.value);

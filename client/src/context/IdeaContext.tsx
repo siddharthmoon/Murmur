@@ -36,6 +36,7 @@ export const IdeaContext = createContext<IdeaContextType>({
   isSearching: false,
   setCurrentIdeaTitle: () => {},
   setCurrentIdeaContent: () => {},
+  setCurrentIdeaAudio: () => {},
   setSearchQuery: () => {},
   toggleEditor: () => {},
   saveIdea: () => {},
@@ -128,6 +129,8 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
               ...idea,
               title: currentIdea.title.trim(),
               content: currentIdea.content.trim(),
+              audioUrl: currentIdea.audioUrl,
+              hasAudio: currentIdea.hasAudio,
             }
           : idea
       );
@@ -135,7 +138,7 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
       setIdeas(updatedIdeas);
       toast({
         title: "Success",
-        description: "Idea updated successfully!",
+        description: "Murmur updated successfully!",
       });
     } else {
       // Create new idea
@@ -143,18 +146,20 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
         id: Date.now(),
         title: currentIdea.title.trim(),
         content: currentIdea.content.trim(),
+        audioUrl: currentIdea.audioUrl,
+        hasAudio: currentIdea.hasAudio,
         timestamp: Date.now(),
       };
 
       setIdeas((prev) => [newIdea, ...prev]);
       toast({
         title: "Success",
-        description: "Idea saved successfully!",
+        description: "Murmur saved successfully!",
       });
     }
 
     // Reset form
-    setCurrentIdea({ title: "", content: "" });
+    setCurrentIdea({ title: "", content: "", audioUrl: undefined, hasAudio: false });
     setSelectedIdeaId(null);
     
     // Hide the editor after saving
@@ -167,6 +172,8 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
       setCurrentIdea({
         title: idea.title,
         content: idea.content,
+        audioUrl: idea.audioUrl,
+        hasAudio: idea.hasAudio,
       });
       setSelectedIdeaId(id);
       
@@ -186,13 +193,13 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
       
       // Reset form if the deleted idea was selected
       if (selectedIdeaId === deleteIdeaId) {
-        setCurrentIdea({ title: "", content: "" });
+        setCurrentIdea({ title: "", content: "", audioUrl: undefined, hasAudio: false });
         setSelectedIdeaId(null);
       }
       
       toast({
         title: "Success",
-        description: "Idea deleted successfully!",
+        description: "Murmur deleted successfully!",
       });
     }
     
@@ -209,7 +216,7 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
     if (isEditorVisible) {
       // If editor is visible, hide it and reset state
       setIsEditorVisible(false);
-      setCurrentIdea({ title: "", content: "" });
+      setCurrentIdea({ title: "", content: "", audioUrl: undefined, hasAudio: false });
       
       // Also clear selected idea if any
       if (selectedIdeaId !== null) {
@@ -235,6 +242,7 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
         isSearching,
         setCurrentIdeaTitle,
         setCurrentIdeaContent,
+        setCurrentIdeaAudio,
         setSearchQuery,
         toggleEditor,
         saveIdea,
