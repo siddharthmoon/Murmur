@@ -35,6 +35,164 @@ const IdeaEditor = () => {
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCurrentIdeaContent(e.target.value);
   };
+  
+  // Format recording time (seconds) to mm:ss
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
+  };
+  
+  // Start recording audio
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Create new MediaRecorder instance
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+      
+      // Set up recording timer
+      setRecordingTime(0);
+      timerRef.current = window.setInterval(() => {
+        setRecordingTime(prevTime => prevTime + 1);
+      }, 1000);
+      
+      // Handle data available event
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      
+      // Handle recording stopped event
+      mediaRecorder.onstop = () => {
+        // Clear timer
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        
+        // Create audio blob and URL
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        setAudioBlob(audioBlob);
+        
+        // Create audio URL for playback
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setCurrentIdeaAudio(audioUrl);
+        
+        // Stop all tracks in the stream
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      // Start recording
+      mediaRecorder.start();
+      setIsRecording(true);
+      
+      toast({
+        title: "Recording started",
+        description: "Your voice is being recorded",
+      });
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      toast({
+        title: "Microphone Error",
+        description: "Could not access your microphone. Please check permissions.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Stop recording audio
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      
+      toast({
+        title: "Recording finished",
+        description: `Recorded ${formatTime(recordingTime)} of audio`,
+      });
+    }
+  };
+  
+  // Play recorded audio
+  const playAudio = () => {
+    if (currentIdea.audioUrl && !isPlaying) {
+      // Create audio element if it doesn't exist
+      if (!audioPlayerRef.current) {
+        audioPlayerRef.current = new Audio(currentIdea.audioUrl);
+        audioPlayerRef.current.onended = () => setIsPlaying(false);
+      } else {
+        audioPlayerRef.current.src = currentIdea.audioUrl;
+      }
+      
+      audioPlayerRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+  
+  // Stop audio playback
+  const stopAudio = () => {
+    if (audioPlayerRef.current && isPlaying) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  };
+  
+  // Delete recorded audio
+  const deleteAudio = () => {
+    if (currentIdea.audioUrl) {
+      // Revoke object URL to prevent memory leaks
+      URL.revokeObjectURL(currentIdea.audioUrl);
+      
+      // Reset audio state
+      setCurrentIdeaAudio("");
+      setAudioBlob(null);
+      setRecordingTime(0);
+      
+      // Reset audio player
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.src = "";
+      }
+      
+      setIsPlaying(false);
+      
+      toast({
+        title: "Audio deleted",
+        description: "Voice recording has been removed",
+      });
+    }
+  };
+  
+  // Clean up resources when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clear timer if running
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      
+      // Stop recording if in progress
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop();
+      }
+      
+      // Clean up audio player
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+      
+      // Revoke any object URLs to prevent memory leaks
+      if (currentIdea.audioUrl) {
+        URL.revokeObjectURL(currentIdea.audioUrl);
+      }
+    };
+  }, []);
 
   // If the editor is not visible and no idea is selected, show only the button
   if (!isEditorVisible && !selectedIdeaId) {
@@ -56,7 +214,7 @@ const IdeaEditor = () => {
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-neutral">
-            {selectedIdeaId ? "Edit Idea" : "Capture New Idea"}
+            {selectedIdeaId ? "Edit Murmur" : "Capture New Murmur"}
           </h2>
           <Button 
             variant="ghost" 
@@ -75,7 +233,7 @@ const IdeaEditor = () => {
             <input
               type="text"
               id="idea-title"
-              placeholder="What's your idea about?"
+              placeholder="What's your murmur about?"
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               value={currentIdea.title}
               onChange={handleTitleChange}
@@ -88,16 +246,98 @@ const IdeaEditor = () => {
             </label>
             <textarea
               id="idea-content"
-              placeholder="Describe your idea here..."
+              placeholder="Describe your thoughts here..."
               className="w-full h-40 px-4 py-2 rounded-lg border border-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               value={currentIdea.content}
               onChange={handleContentChange}
             />
           </div>
+          
+          {/* Voice Recording Section */}
+          <div className="mb-4 border border-gray-200 rounded-lg p-3">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center">
+                <h3 className="text-sm font-medium text-gray-700 mr-2">Voice Notes</h3>
+                {currentIdea.hasAudio && (
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    Audio Available
+                  </Badge>
+                )}
+              </div>
+              
+              {isRecording && (
+                <div className="flex items-center">
+                  <span className="inline-block h-2 w-2 rounded-full bg-red-500 animate-pulse mr-2"></span>
+                  <span className="text-sm font-medium text-red-500">{formatTime(recordingTime)}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {!isRecording && !currentIdea.audioUrl && (
+                <Button 
+                  onClick={startRecording} 
+                  size="sm" 
+                  variant="outline"
+                  className="text-red-500 border-red-200 hover:bg-red-50"
+                >
+                  <Mic className="w-4 h-4 mr-1" />
+                  Record Voice
+                </Button>
+              )}
+              
+              {isRecording && (
+                <Button 
+                  onClick={stopRecording} 
+                  size="sm" 
+                  variant="outline"
+                  className="text-red-500 border-red-200 hover:bg-red-50"
+                >
+                  <StopCircle className="w-4 h-4 mr-1" />
+                  Stop Recording
+                </Button>
+              )}
+              
+              {currentIdea.audioUrl && !isPlaying && (
+                <Button 
+                  onClick={playAudio} 
+                  size="sm" 
+                  variant="outline"
+                  className="text-green-600 border-green-200 hover:bg-green-50"
+                >
+                  <Play className="w-4 h-4 mr-1" />
+                  Play
+                </Button>
+              )}
+              
+              {currentIdea.audioUrl && isPlaying && (
+                <Button 
+                  onClick={stopAudio} 
+                  size="sm" 
+                  variant="outline"
+                  className="text-amber-600 border-amber-200 hover:bg-amber-50"
+                >
+                  <Square className="w-4 h-4 mr-1" />
+                  Stop
+                </Button>
+              )}
+              
+              {currentIdea.audioUrl && (
+                <Button 
+                  onClick={deleteAudio} 
+                  size="sm" 
+                  variant="outline"
+                  className="text-gray-500 border-gray-200 hover:bg-gray-50"
+                >
+                  Delete Audio
+                </Button>
+              )}
+            </div>
+          </div>
 
           <div className="flex justify-between items-center">
             <div className="text-xs text-gray-500">
-              <p>Ideas saved locally on your device</p>
+              <p>Murmurs saved locally on your device</p>
             </div>
             <Button
               onClick={saveIdea}
@@ -106,7 +346,7 @@ const IdeaEditor = () => {
               } text-white`}
             >
               {!selectedIdeaId && <Plus className="w-5 h-5 mr-1" />}
-              {selectedIdeaId ? "Update Idea" : "Save Idea"}
+              {selectedIdeaId ? "Update Murmur" : "Save Murmur"}
             </Button>
           </div>
         </div>

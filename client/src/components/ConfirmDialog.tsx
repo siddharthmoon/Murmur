@@ -19,7 +19,7 @@ const ConfirmDialog = () => {
         <AlertDialogHeader>
           <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete this idea? This action cannot be undone.
+            Are you sure you want to delete this murmur? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
