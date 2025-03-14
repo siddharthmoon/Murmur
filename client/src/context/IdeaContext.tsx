@@ -147,6 +147,9 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
     // Reset form
     setCurrentIdea({ title: "", content: "" });
     setSelectedIdeaId(null);
+    
+    // Hide the editor after saving
+    setIsEditorVisible(false);
   };
 
   const selectIdea = (id: number) => {
@@ -157,6 +160,9 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
         content: idea.content,
       });
       setSelectedIdeaId(id);
+      
+      // Show the editor when selecting an idea
+      setIsEditorVisible(true);
     }
   };
 
@@ -191,10 +197,15 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
   };
   
   const toggleEditor = () => {
-    if (isEditorVisible && selectedIdeaId === null) {
-      // If editor is visible and no idea is selected, hide it
+    if (isEditorVisible) {
+      // If editor is visible, hide it and reset state
       setIsEditorVisible(false);
       setCurrentIdea({ title: "", content: "" });
+      
+      // Also clear selected idea if any
+      if (selectedIdeaId !== null) {
+        setSelectedIdeaId(null);
+      }
     } else {
       // Otherwise show it
       setIsEditorVisible(true);
