@@ -14,6 +14,7 @@ interface IdeaContextType {
   isSearching: boolean;
   setCurrentIdeaTitle: (title: string) => void;
   setCurrentIdeaContent: (content: string) => void;
+  setCurrentIdeaAudio: (audioUrl: string) => void;
   setSearchQuery: (query: string) => void;
   toggleEditor: () => void;
   saveIdea: () => void;
@@ -99,6 +100,14 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
 
   const setCurrentIdeaContent = (content: string) => {
     setCurrentIdea((prev) => ({ ...prev, content }));
+  };
+  
+  const setCurrentIdeaAudio = (audioUrl: string) => {
+    setCurrentIdea((prev) => ({ 
+      ...prev, 
+      audioUrl,
+      hasAudio: !!audioUrl 
+    }));
   };
 
   const saveIdea = () => {

@@ -13,7 +13,7 @@ const IdeaList = () => {
   return (
     <div className="flex-1 overflow-y-auto bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-[500px] md:h-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-neutral">My Ideas</h2>
+        <h2 className="text-lg font-semibold text-neutral">My Murmurs</h2>
         <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">
           {filteredIdeas.length}
         </span>
@@ -36,7 +36,7 @@ const IdeaList = () => {
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
               />
             </svg>
-            <p>{isSearching ? 'No ideas match your search' : 'No ideas yet. Create your first one!'}</p>
+            <p>{isSearching ? 'No murmurs match your search' : 'No murmurs yet. Create your first one!'}</p>
           </div>
         )}
 
