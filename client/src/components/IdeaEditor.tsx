@@ -254,12 +254,12 @@ const IdeaEditor = () => {
           </div>
           
           {/* Voice Recording Section */}
-          <div className="mb-4 border border-gray-200 rounded-lg p-3">
+          <div className="mb-4 border border-border rounded-lg p-3 bg-background/60">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center">
-                <h3 className="text-sm font-medium text-gray-700 mr-2">Voice Notes</h3>
+                <h3 className="text-sm font-medium text-foreground mr-2">Voice Notes</h3>
                 {currentIdea.hasAudio && (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                     Audio Available
                   </Badge>
                 )}
@@ -279,7 +279,7 @@ const IdeaEditor = () => {
                   onClick={startRecording} 
                   size="sm" 
                   variant="outline"
-                  className="text-red-500 border-red-200 hover:bg-red-50"
+                  className="text-red-500 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
                 >
                   <Mic className="w-4 h-4 mr-1" />
                   Record Voice
@@ -291,7 +291,7 @@ const IdeaEditor = () => {
                   onClick={stopRecording} 
                   size="sm" 
                   variant="outline"
-                  className="text-red-500 border-red-200 hover:bg-red-50"
+                  className="text-red-500 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
                 >
                   <StopCircle className="w-4 h-4 mr-1" />
                   Stop Recording
@@ -303,7 +303,7 @@ const IdeaEditor = () => {
                   onClick={playAudio} 
                   size="sm" 
                   variant="outline"
-                  className="text-green-600 border-green-200 hover:bg-green-50"
+                  className="text-green-600 dark:text-green-400 border-green-300 dark:border-green-700 hover:bg-green-100 dark:hover:bg-green-900/30"
                 >
                   <Play className="w-4 h-4 mr-1" />
                   Play
@@ -315,7 +315,7 @@ const IdeaEditor = () => {
                   onClick={stopAudio} 
                   size="sm" 
                   variant="outline"
-                  className="text-amber-600 border-amber-200 hover:bg-amber-50"
+                  className="text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/30"
                 >
                   <Square className="w-4 h-4 mr-1" />
                   Stop
@@ -327,7 +327,7 @@ const IdeaEditor = () => {
                   onClick={deleteAudio} 
                   size="sm" 
                   variant="outline"
-                  className="text-gray-500 border-gray-200 hover:bg-gray-50"
+                  className="text-muted-foreground border-border hover:bg-muted/50"
                 >
                   Delete Audio
                 </Button>
@@ -336,7 +336,7 @@ const IdeaEditor = () => {
           </div>
 
           <div className="flex justify-between items-center">
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-muted-foreground">
               <p>Murmurs saved locally on your device</p>
             </div>
             <Button
