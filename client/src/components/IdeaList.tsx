@@ -11,7 +11,7 @@ const IdeaList = () => {
   } = useIdeas();
 
   return (
-    <div className="md:w-2/5 lg:w-1/3 overflow-y-auto bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-[300px] md:h-auto">
+    <div className="flex-1 overflow-y-auto bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-[500px] md:h-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-neutral">My Ideas</h2>
         <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">

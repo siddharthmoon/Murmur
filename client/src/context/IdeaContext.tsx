@@ -9,11 +9,13 @@ interface IdeaContextType {
   selectedIdeaId: number | null;
   deleteIdeaId: number | null;
   isDeleteDialogOpen: boolean;
+  isEditorVisible: boolean;
   searchQuery: string;
   isSearching: boolean;
   setCurrentIdeaTitle: (title: string) => void;
   setCurrentIdeaContent: (content: string) => void;
   setSearchQuery: (query: string) => void;
+  toggleEditor: () => void;
   saveIdea: () => void;
   selectIdea: (id: number) => void;
   confirmDelete: (id: number) => void;
@@ -28,11 +30,13 @@ export const IdeaContext = createContext<IdeaContextType>({
   selectedIdeaId: null,
   deleteIdeaId: null,
   isDeleteDialogOpen: false,
+  isEditorVisible: false,
   searchQuery: "",
   isSearching: false,
   setCurrentIdeaTitle: () => {},
   setCurrentIdeaContent: () => {},
   setSearchQuery: () => {},
+  toggleEditor: () => {},
   saveIdea: () => {},
   selectIdea: () => {},
   confirmDelete: () => {},
@@ -50,6 +54,7 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
   const [selectedIdeaId, setSelectedIdeaId] = useState<number | null>(null);
   const [deleteIdeaId, setDeleteIdeaId] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
@@ -184,6 +189,17 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
     setIsDeleteDialogOpen(false);
     setDeleteIdeaId(null);
   };
+  
+  const toggleEditor = () => {
+    if (isEditorVisible && selectedIdeaId === null) {
+      // If editor is visible and no idea is selected, hide it
+      setIsEditorVisible(false);
+      setCurrentIdea({ title: "", content: "" });
+    } else {
+      // Otherwise show it
+      setIsEditorVisible(true);
+    }
+  };
 
   return (
     <IdeaContext.Provider
@@ -194,11 +210,13 @@ export const IdeaProvider = ({ children }: IdeaProviderProps) => {
         selectedIdeaId,
         deleteIdeaId,
         isDeleteDialogOpen,
+        isEditorVisible,
         searchQuery,
         isSearching,
         setCurrentIdeaTitle,
         setCurrentIdeaContent,
         setSearchQuery,
+        toggleEditor,
         saveIdea,
         selectIdea,
         confirmDelete,

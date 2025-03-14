@@ -13,10 +13,10 @@ function HomePage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col h-screen">
       <Header />
-      <div className="flex flex-col md:flex-row gap-6 flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden">
         <IdeaList />
-        <IdeaEditor />
       </div>
+      <IdeaEditor />
       <ConfirmDialog />
     </div>
   );
