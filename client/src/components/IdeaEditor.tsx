@@ -210,8 +210,8 @@ const IdeaEditor = () => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10 p-4">
+      <div className="bg-background rounded-lg shadow-lg p-6 w-full max-w-2xl flex flex-col max-h-[90vh] border border-border">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-neutral">
             {selectedIdeaId ? "Edit Murmur" : "Capture New Murmur"}
@@ -227,27 +227,27 @@ const IdeaEditor = () => {
 
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="mb-4">
-            <label htmlFor="idea-title" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="idea-title" className="block text-sm font-medium text-foreground mb-1">
               Title
             </label>
             <input
               type="text"
               id="idea-title"
               placeholder="What's your murmur about?"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               value={currentIdea.title}
               onChange={handleTitleChange}
             />
           </div>
 
           <div className="flex-1 mb-4 overflow-hidden">
-            <label htmlFor="idea-content" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="idea-content" className="block text-sm font-medium text-foreground mb-1">
               Details
             </label>
             <textarea
               id="idea-content"
               placeholder="Describe your thoughts here..."
-              className="w-full h-40 px-4 py-2 rounded-lg border border-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full h-40 px-4 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               value={currentIdea.content}
               onChange={handleContentChange}
             />
